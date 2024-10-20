@@ -3,25 +3,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 import datagen
 
-class Fourier2(tf.keras.Model):
+class FourierVanilla2(tf.keras.Model):
     def __init__(self, in_dim:int, out_dim:int):
         super().__init__()
         self.in_dim:int = in_dim
         self.out_dim:int = out_dim
         fourier_rows = []
         for k in range(in_dim):
-            fourier_rows.append(tf.cos(2 * np.pi * k / in_dim * tf.range(0., in_dim, 1., dtype=tf.dtypes.float32)))
+            fourier_rows.append(tf.cos(2 * np.pi * k / in_dim * tf.range(0, in_dim, 1, dtype=tf.dtypes.float32)))
         self.fourier = tf.stack(fourier_rows)
         self.fourier = tf.transpose(self.fourier)
-        self.dense1 = tf.keras.layers.Dense(in_dim, activation='tanh')
-        self.dense2 = tf.keras.layers.Dense(in_dim, activation='tanh')
-        self.dense3 = tf.keras.layers.Dense(in_dim, activation='tanh')
-        self.dense4 = tf.keras.layers.Dense(in_dim, activation='tanh')
-        self.dense5 = tf.keras.layers.Dense(in_dim, activation='tanh')
+        self.dense1 = tf.keras.layers.Dense(2 * in_dim, activation='tanh')
+        self.dense2 = tf.keras.layers.Dense(2 * in_dim, activation='tanh')
+        self.dense3 = tf.keras.layers.Dense(2 * in_dim, activation='tanh')
+        self.dense4 = tf.keras.layers.Dense(2 * in_dim, activation='tanh')
+        self.dense5 = tf.keras.layers.Dense(2 * in_dim, activation='tanh')
         self.dense6 = tf.keras.layers.Dense(out_dim)
 
     def call(self, x):
-        x = tf.linalg.matmul(x, self.fourier)
+        x_f = tf.linalg.matmul(x, self.fourier)
+        x = tf.concat([x, x_f], axis=-1)
         x = self.dense1(x)
         x = self.dense2(x)
         x = self.dense3(x)
@@ -31,7 +32,7 @@ class Fourier2(tf.keras.Model):
         return x
 
 
-model = Fourier2(100, 100)
+model = FourierVanilla2(100, 100)
 model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
     loss=tf.keras.losses.MeanSquaredError()

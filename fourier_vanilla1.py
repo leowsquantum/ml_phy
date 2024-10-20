@@ -11,6 +11,8 @@ class FourierVanilla1(tf.keras.Model):
         fourier_rows = []
         for k in range(in_dim):
             fourier_rows.append(tf.cos(2 * np.pi * k / in_dim * tf.range(0, in_dim, 1, dtype=tf.dtypes.float32)))
+            plt.plot(fourier_rows[k])
+            plt.show()
         self.fourier = tf.stack(fourier_rows)
         self.fourier = tf.transpose(self.fourier)
         self.dense1 = tf.keras.layers.Dense(in_dim, activation='tanh')

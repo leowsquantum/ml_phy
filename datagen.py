@@ -23,6 +23,47 @@ def problem0927(m: int, n: int, j_max: int) -> tuple[tf.Tensor, tf.Tensor]:
     y = tf.stack(y)
     return x, y
 
+def problem0927_2(m: int, n: int, j_max: int) -> tuple[tf.Tensor, tf.Tensor]:
+    '''
+    Generate data
+    :param m: vector dimension (input and output)
+    :param n: number of points
+    :param j_max: j is in [0, j_max]. There are j 1s and m-j 0s in input vector.
+    :return: x: input vector; y: output vector.
+    '''
+    j = tf.random.uniform(minval=0, maxval=j_max + 1, shape=(n,), dtype=tf.dtypes.int32)
+    x = []
+    y = []
+    for i in range(n):
+        x.append(tf.random.shuffle(tf.concat(
+            [tf.constant(1., shape=(j[i],), dtype=tf.dtypes.float16),
+             tf.constant(0., shape=(m - j[i],), dtype=tf.dtypes.float16)], 0)))
+        y.append(tf.constant(tf.cast(tf.range(0, m) == tf.constant(j[i], shape=(m,)), dtype=tf.dtypes.float32),
+                             dtype=tf.dtypes.float32))
+    x = tf.stack(x)
+    y = tf.stack(y)
+    return x, y
+
+def problem0927_3(m: int, n: int, j_max: int) -> tuple[tf.Tensor, tf.Tensor]:
+    '''
+    Generate data
+    :param m: vector dimension (input and output)
+    :param n: number of points
+    :param j_max: j is in [0, j_max]. There are j 1s and m-j 0s in input vector.
+    :return: x: input vector; y: output vector.
+    '''
+    j = tf.random.uniform(minval=0, maxval=j_max + 1, shape=(n,), dtype=tf.dtypes.int32)
+    x = []
+    y = []
+    for i in range(n):
+        x.append(tf.random.shuffle(tf.concat(
+            [tf.constant(1., shape=(j[i],), dtype=tf.dtypes.float16),
+             tf.constant(0., shape=(m - j[i],), dtype=tf.dtypes.float16)], 0)))
+        y.append(tf.constant(tf.reduce_sum(x[i]), shape=(1,)))
+    x = tf.stack(x)
+    y = tf.stack(y)
+    return x, y
+
 
 def hydrogen211(n, max_r) -> tuple[tf.Tensor, tf.Tensor]:
     '''
@@ -48,3 +89,4 @@ def trig(n, max_x) -> tuple[tf.Tensor, tf.Tensor]:
     x = tf.expand_dims(tf.random.uniform((n,), 0., max_x, dtype=tf.dtypes.float32), axis=-1)
     y = tf.math.sin(x)
     return x, y
+

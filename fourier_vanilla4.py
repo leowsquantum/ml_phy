@@ -3,45 +3,39 @@ import numpy as np
 import matplotlib.pyplot as plt
 import datagen
 
-class Fourier2(tf.keras.Model):
-    def __init__(self, in_dim:int, out_dim:int):
+class FourierVanilla4(tf.keras.Model):
+    def __init__(self, in_dim:int):
         super().__init__()
         self.in_dim:int = in_dim
-        self.out_dim:int = out_dim
         fourier_rows = []
         for k in range(in_dim):
-            fourier_rows.append(tf.cos(2 * np.pi * k / in_dim * tf.range(0., in_dim, 1., dtype=tf.dtypes.float32)))
+            fourier_rows.append(tf.cos(2 * np.pi * k / in_dim * tf.range(0, in_dim, 1, dtype=tf.dtypes.float32)))
         self.fourier = tf.stack(fourier_rows)
         self.fourier = tf.transpose(self.fourier)
-        self.dense1 = tf.keras.layers.Dense(in_dim, activation='tanh')
-        self.dense2 = tf.keras.layers.Dense(in_dim, activation='tanh')
-        self.dense3 = tf.keras.layers.Dense(in_dim, activation='tanh')
-        self.dense4 = tf.keras.layers.Dense(in_dim, activation='tanh')
-        self.dense5 = tf.keras.layers.Dense(in_dim, activation='tanh')
-        self.dense6 = tf.keras.layers.Dense(out_dim)
+        self.dense1 = tf.keras.layers.Dense(2 * in_dim, activation='relu')
+        self.dense2 = tf.keras.layers.Dense(1)
 
     def call(self, x):
-        x = tf.linalg.matmul(x, self.fourier)
+        x_f = tf.linalg.matmul(x, self.fourier)
+        x = tf.concat([x, x_f], axis=-1)
         x = self.dense1(x)
         x = self.dense2(x)
-        x = self.dense3(x)
-        x = self.dense4(x)
-        x = self.dense5(x)
-        x = self.dense6(x)
         return x
 
 
-model = Fourier2(100, 100)
+model = FourierVanilla4(10)
 model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
     loss=tf.keras.losses.MeanSquaredError()
 )
 
-x_train, y_train = datagen.problem0927(100, 800, 50)
-x_test, y_test = datagen.problem0927(100, 200, 100)
+x_train, y_train = datagen.problem0927_2(10, 800, 5)
+x_test, y_test = datagen.problem0927_2(10, 200, 10)
 train_loss = []
 test_loss = []
 epochs = 50
+print(x_train.shape)
+print(y_train.shape)
 
 for epoch in range(epochs):
     model.fit(x_train, y_train, epochs=1, verbose=0)
