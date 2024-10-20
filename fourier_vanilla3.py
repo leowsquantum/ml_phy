@@ -24,17 +24,17 @@ class FourierVanilla3(tf.keras.Model):
         return x
 
 
-model = FourierVanilla3(10, 10)
+model = FourierVanilla3(100, 100)
 model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
     loss=tf.keras.losses.CategoricalCrossentropy()
 )
 
-x_train, y_train = datagen.problem0927_2(10, 800, 5)
-x_test, y_test = datagen.problem0927_2(10, 200, 10)
+x_train, y_train = datagen.problem0927_2(100, 800, 10)
+x_test, y_test = datagen.problem0927_2(100, 200, 100)
 train_loss = []
 test_loss = []
-epochs = 50
+epochs = 100
 print(x_train.shape)
 print(y_train.shape)
 

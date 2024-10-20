@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import datagen
 
-class FourierVanilla4(tf.keras.Model):
+class Vanilla4(tf.keras.Model):
     def __init__(self, in_dim:int):
         super().__init__()
         self.in_dim:int = in_dim
@@ -16,17 +16,17 @@ class FourierVanilla4(tf.keras.Model):
         return x
 
 
-model = FourierVanilla4(10)
+model = Vanilla4(100)
 model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
     loss=tf.keras.losses.MeanSquaredError()
 )
 
-x_train, y_train = datagen.problem0927_2(10, 800, 5)
-x_test, y_test = datagen.problem0927_2(10, 200, 10)
+x_train, y_train = datagen.problem0927_3(100, 800, 10)
+x_test, y_test = datagen.problem0927_3(100, 200, 100)
 train_loss = []
 test_loss = []
-epochs = 50
+epochs = 100
 print(x_train.shape)
 print(y_train.shape)
 
